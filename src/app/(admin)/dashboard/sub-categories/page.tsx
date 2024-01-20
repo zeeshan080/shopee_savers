@@ -3,23 +3,23 @@ import React from "react";
 import { DataTable } from "../../components/DataTable";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
-import { CreateCoupon } from "../../components/CreateCoupon";
 import { ColumnDef } from "@tanstack/react-table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { couponType } from "../../../../../drizzle/migrations/schema";
 import { EditCoupon } from "../../components/EditCoupon";
+import { CreateSubCategory } from "../../components/CreateSubCategory";
 
 type Props = {};
 
-export default function Coupon({}: Props) {
+export default function SubCategories({}: Props) {
   const [open, setOpen] = React.useState(false);
   const [couponId, setCouponId] = React.useState<number>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [categoryData, setCouponData] = React.useState<couponType[]>([]);
   const getCouponData = async () => {
     setIsLoading(true);
-    const data = await fetch("/api/coupon", {
+    const data = await fetch("/api/sub-categories", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -36,9 +36,9 @@ export default function Coupon({}: Props) {
 
   const columns: ColumnDef<couponType>[] = [
     {
-      id: "couponId",
-      header: "Coupon Id",
-      accessorKey: "couponId",
+      id: "subCategoryId",
+      header: "Sub Category Id",
+      accessorKey: "subCategoryId",
     },
     {
       id: "name",
@@ -93,10 +93,10 @@ export default function Coupon({}: Props) {
         {couponId ? (
           <EditCoupon open={open} setToggle={handleEdit} couponId={couponId} />
         ) : (
-          <CreateCoupon open={open} setToggle={handleEdit} />
+          <CreateSubCategory open={open} setToggle={handleEdit} />
         )}
         <div className="flex justify-end">
-          <Button onClick={() => handleEdit()}>Add New Coupon</Button>
+          <Button onClick={() => handleEdit()}>Add New Sub Category</Button>
         </div>
         {
           isLoading ? 

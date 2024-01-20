@@ -15,10 +15,16 @@ const rancho = Rancho({
 export default function Header({}: Props) {
   const path = usePathname();
   const [showMenu, setShowMenu] = React.useState(false);
+  const [search, setSearch] = React.useState("");
 
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(search);
+    window.location.href = `/stores?search=${search}`;
+  }
   return (
     <header className="flex flex-col lg:flex-row items-start justify-between lg:items-center p-3 bg-[#397250] text-white">
       <div className=" px-3 w-full lg:w-[45%]">
@@ -56,13 +62,14 @@ export default function Header({}: Props) {
           </ul>
         </nav>
         <div className="hidden lg:flex w-[45%]">
-          <div className="relative">
+          <form className="relative" onSubmit={onSubmit}>
             <Search size={19} className="absolute top-3 left-3 text-gray-500" />
             <Input
+            onChange={(e) => setSearch(e.target.value)}
               placeholder="Search for your favorite store"
               className="rounded-full pl-9 italic text-gray-900"
             />
-          </div>
+          </form>
         </div>
 
         {/* Burger Menu */}

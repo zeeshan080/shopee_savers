@@ -3,23 +3,30 @@ import React from "react";
 import { DataTable } from "../../components/DataTable";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
-import { CreateCoupon } from "../../components/CreateCoupon";
 import { ColumnDef } from "@tanstack/react-table";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { couponType } from "../../../../../drizzle/migrations/schema";
 import { EditCoupon } from "../../components/EditCoupon";
+import { CreateCategory } from "../../components/CreateCategory";
 
 type Props = {};
 
-export default function Coupon({}: Props) {
+export default function Categories({}: Props) {
   const [open, setOpen] = React.useState(false);
   const [couponId, setCouponId] = React.useState<number>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [categoryData, setCouponData] = React.useState<couponType[]>([]);
   const getCouponData = async () => {
     setIsLoading(true);
-    const data = await fetch("/api/coupon", {
+    const data = await fetch("/api/categories", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -36,9 +43,9 @@ export default function Coupon({}: Props) {
 
   const columns: ColumnDef<couponType>[] = [
     {
-      id: "couponId",
-      header: "Coupon Id",
-      accessorKey: "couponId",
+      id: "categoryId",
+      header: "Category Id",
+      accessorKey: "categoryId",
     },
     {
       id: "name",
@@ -52,9 +59,7 @@ export default function Coupon({}: Props) {
       id: "created_at",
       header: "Created At",
       accessorKey: "created_at",
-      cell: ({ row }) => (
-        <div >{row.getValue("created_at")}</div>
-      ),
+      cell: ({ row }) => <div>{row.getValue("created_at")}</div>,
     },
     {
       id: "actions",
@@ -93,18 +98,18 @@ export default function Coupon({}: Props) {
         {couponId ? (
           <EditCoupon open={open} setToggle={handleEdit} couponId={couponId} />
         ) : (
-          <CreateCoupon open={open} setToggle={handleEdit} />
+          <CreateCategory open={open} setToggle={handleEdit} />
         )}
         <div className="flex justify-end">
-          <Button onClick={() => handleEdit()}>Add New Coupon</Button>
+          <Button onClick={() => handleEdit()}>Add New Category</Button>
         </div>
-        {
-          isLoading ? 
-          (<div className="flex justify-center items-center w-full h-full min-h-[70vh]">
-            <Loader2 className="animate-spin" size={38}/>
-          </div>):
-          (<DataTable data={categoryData} columns={columns} />)
-        }
+        {isLoading ? (
+          <div className="flex justify-center items-center w-full h-full min-h-[70vh]">
+            <Loader2 className="animate-spin" size={38} />
+          </div>
+        ) : (
+          <DataTable data={categoryData} columns={columns} />
+        )}
       </section>
     </main>
   );

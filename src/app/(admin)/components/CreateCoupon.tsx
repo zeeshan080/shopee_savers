@@ -17,9 +17,13 @@ import { Form } from "@/components/ui/form";
 import {
   couponFormSchema,
   couponFormSchemaType,
+  discountType,
+  storeFormSchemaType,
   subCategoryType,
 } from "../../../../drizzle/migrations/schema";
 import CouponItem from "./CouponItem";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -27,10 +31,36 @@ type Props = {
 };
 
 export function CreateCoupon({ open, setToggle }: Props) {
+  const [store, setStore] = useState<storeFormSchemaType[]>([]);
   const [subCategory, setSubCategory] = useState<subCategoryType[]>([]);
+  const [discount, setDiscount] = useState<discountType[]>([]);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
+  const getStoreData = async () => {
+    const data = await fetch("/api/store", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache",
+    });
+    const response = await data.json();
+    setStore(response.message);
+  };
+  const getDiscountData = async () => {
+    const data = await fetch("/api/discount", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache",
+    });
+    const response = await data.json();
+    setDiscount(response.message);
+  };
   const getSubCategoryData = async () => {
-    const data = await fetch("/api/subcategory", {
+    const data = await fetch("/api/sub-categories", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -41,20 +71,45 @@ export function CreateCoupon({ open, setToggle }: Props) {
     setSubCategory(response.message);
   };
   useEffect(() => {
+    getStoreData();
     getSubCategoryData();
+    getDiscountData();
   }, []);
+
   const form = useForm<couponFormSchemaType>({
     resolver: zodResolver(couponFormSchema),
     defaultValues: {
-      merchant: "",
       description: "",
       tagline: "",
       link: "",
+      created_at: new Date(Date.now()).toISOString(),
+      updated_at: new Date(Date.now()).toISOString(),
     },
   });
 
-  function onSubmit(values: z.infer<typeof couponFormSchema>) {
-    console.log("values -->", values);
+  async function onSubmit(values: z.infer<typeof couponFormSchema>) {
+    console.log("values--> ", values);
+    
+    setIsLoading(true);
+    const postData = await fetch("/api/coupon", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache",
+      body: JSON.stringify(values),
+    });
+    const response = await postData.json();
+    setIsLoading(false);
+    if (response.status === 201) {
+      toast({
+        variant: "success",
+        title: "Success",
+        description: response.statusText,
+      });
+      form.reset();
+      window.location.reload();
+    }
   }
 
   return (
@@ -72,19 +127,25 @@ export function CreateCoupon({ open, setToggle }: Props) {
               </DialogHeader>
               <div className="grid gap-4 py-4 px-3">
                 <div className="grid grid-cols-6 items-center gap-4">
-                  <CouponItem
-                    id={"merchant"}
+                <CouponItem
+                    id={"storeId"}
                     label={"Merchant"}
-                    name={"merchant"}
+                    name={"storeId"}
                     form={form}
-                    inputType={"input"}
+                    isDropdown={true}
+                    dropdownValue={store.map((item) => {
+                      return {
+                        id: String(item.storeId),
+                        value: `${item.storeId} - ${item.name}`,
+                      };
+                    })}
                   />
                 </div>
                 <div className="grid grid-cols-6 items-center gap-4">
                   <CouponItem
-                    id={"coupon"}
-                    label={"Coupon"}
-                    name={"coupon"}
+                    id={"name"}
+                    label={"Coupon Name"}
+                    name={"name"}
                     form={form}
                     inputType={"input"}
                   />
@@ -111,7 +172,7 @@ export function CreateCoupon({ open, setToggle }: Props) {
                   <CouponItem
                     id={"expiry"}
                     label={"Expiration"}
-                    name={"expiry"}
+                    name={"expire_date"}
                     form={form}
                     inputType={"input"}
                     isDate={true}
@@ -119,15 +180,48 @@ export function CreateCoupon({ open, setToggle }: Props) {
                 </div>
                 <div className="grid grid-cols-6 items-center gap-4">
                   <CouponItem
-                    id={"category"}
+                    id={"used_times"}
+                    label={"Used Times"}
+                    name={"used_times"}
+                    form={form}
+                    inputType={"input"}
+                  />
+                </div>
+                <div className="grid grid-cols-6 items-center gap-4">
+                  <CouponItem
+                    id={"discountId"}
+                    label={"Discount Type"}
+                    name={"discountId"}
+                    form={form}
+                    isDropdown={true}
+                    dropdownValue={discount.map((item) => {
+                      return {
+                        id: String(item.discountId),
+                        value: `${item.discountId} - ${item.name}`,
+                      };
+                    })}
+                  />
+                </div>
+                <div className="grid grid-cols-6 items-center gap-4">
+                  <CouponItem
+                    id={"discount_number"}
+                    label={"Discount Number"}
+                    name={"discount_number"}
+                    form={form}
+                    inputType={"input"}
+                  />
+                </div>
+                <div className="grid grid-cols-6 items-center gap-4">
+                  <CouponItem
+                    id={"subCategoryId"}
                     label={"Sub Category"}
-                    name={"category"}
+                    name={"subCategoryId"}
                     form={form}
                     isDropdown={true}
                     dropdownValue={subCategory.map((item) => {
                       return {
-                        value: item.name,
-                        id: `${item.name} - ${item.name}`,
+                        id: String(item.categoryId),
+                        value: `${item.categoryId} - ${item.name}`,
                       };
                     })}
                   />
@@ -188,7 +282,15 @@ export function CreateCoupon({ open, setToggle }: Props) {
                 </div>
               </div>
               <DialogFooter className="mr-6">
-                <Button type="submit">Save changes</Button>
+              {isLoading ? (
+                  <Button className="min-w-[25%]" type="submit" disabled>
+                    <Loader size={17} className="animate-spin mr-1" /> Saving...
+                  </Button>
+                ) : (
+                  <Button className="min-w-[25%]" type="submit">
+                    Save changes
+                  </Button>
+                )}
               </DialogFooter>
             </form>
           </Form>

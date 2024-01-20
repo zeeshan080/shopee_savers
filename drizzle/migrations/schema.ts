@@ -76,8 +76,11 @@ export const subCategory = pgTable("subCategory", {
 
 
 export const storeFormSchema = z.object({
+  storeId: z.string().min(1, {
+    message: "id must be at least 1 characters.",
+  }),
   name: z.string().min(2, {
-    message: "name name must be at least 2 characters.",
+    message: "name must be at least 2 characters.",
   }),
   description: z.string().min(2, {
     message: "description must be at least 2 characters.",
@@ -115,10 +118,10 @@ export const storeFormSchema = z.object({
 });
 
 export const couponFormSchema = z.object({
-  merchant: z.string().min(2, {
-    message: "merchant name must be at least 2 characters.",
+  storeId: z.string().min(1, {
+    message: "merchant name must be at least 1 characters.",
   }),
-  coupon: z.string().min(2, {
+  name: z.string().min(2, {
     message: "coupon must be at least 2 characters.",
   }),
   tagline: z.string().min(2, {
@@ -127,8 +130,17 @@ export const couponFormSchema = z.object({
   description: z.string().min(2, {
     message: "description must be at least 2 characters.",
   }),
-  expiry: z.string({
+  expire_date: z.string({
     required_error: "expiry date is required.",
+  }),
+  used_times: z.string().min(1, {
+    message: "use times must be at least 1 characters.",
+  }),
+  discount_number: z.string().min(1, {
+    message: "discount number must be at least 1 characters.",
+  }),
+  discountId: z.string().min(1, {
+    message: "discount type must be at least 1 characters.",
   }),
   link: z.string().min(2, {
     message: "link must be at least 2 characters.",
@@ -142,9 +154,11 @@ export const couponFormSchema = z.object({
   trending: z.enum(["yes", "no","none"], {
     required_error: "You need to select a favorite type.",
   }),
-  category: z.string().min(2, {
-    message: "category must be at selected.",
-  })
+  subCategoryId: z.string().min(1, {
+    message: "Sub Category must be at selected.",
+  }),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional()
 });
 
 export const categoryFormSchema = z.object({
@@ -159,12 +173,10 @@ export const subCategoryFormSchema = z.object({
   name: z.string().min(2, {
     message: "name must be at least 2 characters.",
   }),
-  categoryId: z.string().min(1, {
-    message: "subCategoryId must be at selected.",
-  }),
   created_at: z.string().optional(),
   updated_at:z.string().optional()
 });
+
 
 export const blogFormSchema = z.object({
   title: z.string().min(2, {

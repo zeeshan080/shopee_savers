@@ -79,7 +79,7 @@ export default function Sidebar({}: Props) {
             <li>
               <SidebarItem
                 name="CATEGORIES"
-                href={"/dashboard/category"}
+                href={"/dashboard/categories"}
                 Icon={Layers3}
                 toggle={toggle}
               />
@@ -87,7 +87,7 @@ export default function Sidebar({}: Props) {
             <li>
               <SidebarItem
                 name="SUBCATEGORIES"
-                href={"/dashboard/sub-category"}
+                href={"/dashboard/sub-categories"}
                 Icon={Layers2}
                 toggle={toggle}
               />

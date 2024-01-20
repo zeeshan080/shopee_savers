@@ -109,6 +109,7 @@ export function EditStore({ open, setToggle, id }: Props) {
   const form = useForm<storeFormSchemaType>({
     resolver: zodResolver(storeFormSchema),
     values: {
+      storeId: storeData.storeId.toString(),
       name: storeData.name,
       description: storeData.description,
       about: storeData.about,

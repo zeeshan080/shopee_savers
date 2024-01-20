@@ -24,15 +24,18 @@ type Props = {
   id: string;
   label: string;
   name:
-    | "merchant"
-    | "coupon"
+    | "storeId"
+    | "name"
     | "tagline"
     | "description"
-    | "expiry"
+    | "expire_date"
+    | "used_times"
+    | "discountId"
+    | "discount_number"
     | "exclusive"
     | "trending"
     | "position"
-    | "category"
+    | "subCategoryId"
     | "link";
   form: UseFormReturn<couponFormSchemaType>;
   inputType?: string;
@@ -120,7 +123,7 @@ export default function CouponItem({
                 {
                   // @ts-ignore
                   dropdownValue.map((item) => (
-                    <SelectItem value={item.value} id={item.id} key={item.id}>
+                    <SelectItem value={item.id} id={item.id} key={item.id}>
                       {item.value}
                     </SelectItem>
                   ))
