@@ -5,11 +5,17 @@ import { db } from "../../../../drizzle/dizzle";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const storeID = searchParams.get("id");
+  const discountID = searchParams.get("id");
   const filter = searchParams.get("filter");
+  if (discountID) {
+    const rows = await db
+      .select()
+      .from(discount)
+      .where(eq(discount.discountId, Number(discountID)));
+    return NextResponse.json({ message: rows });
+  }
 
   const rows = await db.select().from(discount);
-
   return NextResponse.json({ message: rows });
 }
 

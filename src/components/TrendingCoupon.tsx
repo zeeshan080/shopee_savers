@@ -1,12 +1,14 @@
-'use client'
+"use client";
 import React from "react";
 import CouponCard from "./CouponCard";
-import { couponType } from "../../drizzle/migrations/schema";
+import { couponType, discountType } from "../../drizzle/migrations/schema";
 
 type Props = {};
 
 export default function TrendingCoupon({}: Props) {
-  const [coupon,setCoupon] = React.useState<couponType[]>([]);
+  const [coupon, setCoupon] = React.useState<
+    { coupon: couponType; discount: discountType }[]
+  >([]);
 
   const getCoupon = async () => {
     const response = await fetch(`/api/coupon/?filter=trending`, {
@@ -27,9 +29,9 @@ export default function TrendingCoupon({}: Props) {
           Trending Coupons
         </div>
         <div className="flex flex-col gap-y-5">
-          <CouponCard />
-          <CouponCard />
-          <CouponCard />
+          {coupon.map((coupon) => (
+            <CouponCard key={coupon.coupon.couponId} couponData={coupon} />
+          ))}
         </div>
       </section>
     </main>

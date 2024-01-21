@@ -5,6 +5,7 @@ import Link from "next/link";
 import CouponCard from "@/components/CouponCard";
 import StoreHeader from "@/components/StoreHeader";
 import { storeType } from "../../../../../drizzle/migrations/schema";
+import StoreCoupon from "@/components/StoreCoupon";
 
 type Props = {
   params: { id: string };
@@ -20,10 +21,10 @@ export default function SingleStore({ params }: Props) {
       cache: "no-cache",
     });
     const data = await response.json();
-    console.log(data);
     setsingleStore(data.message[0]);
     setIsLoading(false);
   };
+
   useEffect(() => {
     getSingleStore();
   }, []);
@@ -77,8 +78,8 @@ export default function SingleStore({ params }: Props) {
             </div>
             {/* <Popular grid={"grid-cols-2"} /> */}
           </section>
-          <section>
-            <CouponCard />
+          <section className="w-full">
+            {singleStore.name && <StoreCoupon name={singleStore.name} />}
           </section>
         </section>
       </main>

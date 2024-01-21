@@ -2,6 +2,7 @@ import About from "@/components/About";
 import Banner from "@/components/Banner";
 import Faq from "@/components/Faq";
 import Favourite from "@/components/Favourite";
+import Topic from "@/components/Topic";
 import TrendingCoupon from "@/components/TrendingCoupon";
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       <TrendingCoupon/>
       <Faq />
       <About />
+      <Topic/>
     </main>
   );
 }
