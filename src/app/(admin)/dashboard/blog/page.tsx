@@ -5,10 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Loader2, MoreHorizontal } from "lucide-react";
 import { blogType } from "../../../../../drizzle/migrations/schema";
-
+import { CreateBlog } from "../../components/createBlog";
+import { EditStore } from "../../components/EditStore";
 
 type Props = {};
 
@@ -68,9 +76,7 @@ export default function Blog({}: Props) {
       id: "created_at",
       header: "Created Date",
       accessorKey: "created_at",
-      cell: ({ row }) => (
-        <div>{row.getValue("created_at")}</div>
-      ),
+      cell: ({ row }) => <div>{row.getValue("created_at")}</div>,
     },
     {
       id: "actions",
@@ -106,16 +112,21 @@ export default function Blog({}: Props) {
     <main>
       <Toaster />
       <section className="m-4">
+        {blogId ? (
+          <EditStore open={open} setToggle={handleEdit} id={blogId} />
+        ) : (
+          <CreateBlog open={open} setToggle={handleEdit} />
+        )}
         <div className="flex justify-end">
           <Button onClick={() => handleEdit()}>Add New Blog</Button>
         </div>
-        {
-          isLoading ? 
-          (<div className="flex justify-center items-center w-full h-full min-h-[70vh]">
-            <Loader2 className="animate-spin" size={38}/>
-          </div>):
-          (<DataTable data={blogData} columns={columns} />)
-        }
+        {isLoading ? (
+          <div className="flex justify-center items-center w-full h-full min-h-[70vh]">
+            <Loader2 className="animate-spin" size={38} />
+          </div>
+        ) : (
+          <DataTable data={blogData} columns={columns} searchBy={"title"} />
+        )}
       </section>
     </main>
   );

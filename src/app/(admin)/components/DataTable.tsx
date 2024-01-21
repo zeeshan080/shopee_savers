@@ -29,9 +29,10 @@ import {
 
 type Props = {
   data: any;
+  searchBy?:string;
   columns: any;
 };
-export function DataTable({ data, columns }: Props) {
+export function DataTable({ data, columns,searchBy="name"}: Props) {
   const table = useReactTable({
     data,
     columns,
@@ -47,9 +48,9 @@ export function DataTable({ data, columns }: Props) {
         <div className="flex items-center py-4">
           <Input
             placeholder="Filter Store Name..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn(searchBy)?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
+              table.getColumn(searchBy)?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />

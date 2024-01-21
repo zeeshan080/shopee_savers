@@ -1,0 +1,1 @@
+ALTER TABLE "coupon" ADD COLUMN "trending" boolean NOT NULL;

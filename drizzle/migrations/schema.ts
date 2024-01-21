@@ -34,6 +34,7 @@ export const coupon = pgTable("coupon", {
   used_times: numeric("used_times").notNull(),
   discount_number: numeric("discount_number").notNull(),
   exclusive: boolean("exclusive").notNull(),
+  trending: boolean("trending").notNull(),
   link: text("link").notNull(),
   discountId: serial("discountId").references(() => discount.discountId),
   storeId: serial("storeId").references(() => store.storeId),

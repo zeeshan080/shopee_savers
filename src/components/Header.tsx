@@ -1,8 +1,9 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { notFound } from 'next/navigation'
 import Link from "next/link";
 import React from "react";
-import { Menu, Search } from "lucide-react";
+import { Loader2, Menu, Search } from "lucide-react";
 import { Rancho } from "next/font/google";
 import { Input } from "./ui/input";
 
@@ -16,15 +17,25 @@ export default function Header({}: Props) {
   const path = usePathname();
   const [showMenu, setShowMenu] = React.useState(false);
   const [search, setSearch] = React.useState("");
-
+  const [isLoading, setIsLoading] = React.useState(false);
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(search);
-    window.location.href = `/stores?search=${search}`;
-  }
+    setIsLoading(true);
+    const getStore = await fetch(`/api/store?search=${search}`, {
+      method: "GET",
+      cache: "no-cache",
+    });
+    setIsLoading(false);
+    const store = await getStore.json();
+    console.log(store);
+    if (store.message.length == 0) {
+      window.location.href = `/not-found?search=${search}`;
+    }
+    window.location.href = `/stores/${store.message[0].id}`;
+  };
   return (
     <header className="flex flex-col lg:flex-row items-start justify-between lg:items-center p-3 bg-[#397250] text-white">
       <div className=" px-3 w-full lg:w-[45%]">
@@ -63,9 +74,17 @@ export default function Header({}: Props) {
         </nav>
         <div className="hidden lg:flex w-[45%]">
           <form className="relative" onSubmit={onSubmit}>
-            <Search size={19} className="absolute top-3 left-3 text-gray-500" />
+            {isLoading ? (
+              <Loader2 size={19} className="animate-spin absolute top-3 left-3 text-gray-500 " />
+            ) : (
+              <Search
+                size={19}
+                className="absolute top-3 left-3 text-gray-500"
+              />
+            )}
             <Input
-            onChange={(e) => setSearch(e.target.value)}
+              disabled={isLoading}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search for your favorite store"
               className="rounded-full pl-9 italic text-gray-900"
             />

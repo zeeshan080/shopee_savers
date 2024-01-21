@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main>
       <Banner />
-      {/* <Favourite /> */}
+      <Favourite />
       <TrendingCoupon/>
       <Faq />
       <About />

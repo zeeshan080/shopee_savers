@@ -1,9 +1,25 @@
+'use client'
 import React from "react";
 import CouponCard from "./CouponCard";
+import { couponType } from "../../drizzle/migrations/schema";
 
 type Props = {};
 
 export default function TrendingCoupon({}: Props) {
+  const [coupon,setCoupon] = React.useState<couponType[]>([]);
+
+  const getCoupon = async () => {
+    const response = await fetch(`/api/coupon/?filter=trending`, {
+      method: "GET",
+      cache: "no-cache",
+    });
+    const data = await response.json();
+    setCoupon(data.message);
+  };
+
+  React.useEffect(() => {
+    getCoupon();
+  }, []);
   return (
     <main>
       <section className="bg-gray-100 lg:m-6 lg:p-8">

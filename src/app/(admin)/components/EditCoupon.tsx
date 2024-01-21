@@ -36,6 +36,7 @@ const [storeData, setCouponData] = useState<couponType>({
     description: "",
     link: "",
     tagline: "",
+    trending: false,
     exclusive: false,
     created_at: new Date(Date.now()).toISOString(),
     updated_at: new Date(Date.now()).toISOString(),

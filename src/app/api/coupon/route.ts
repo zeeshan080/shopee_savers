@@ -8,6 +8,14 @@ export async function GET(request: NextRequest) {
   const couponID = searchParams.get("id");
   const filter = searchParams.get("filter");
 
+  if (filter === "trending") {
+    const rows = await db
+      .select()
+      .from(coupon)
+      .where(eq(coupon.trending, true ));
+    return NextResponse.json({ message: rows });
+  }
+
   const rows = await db
     .select()
     .from(coupon)

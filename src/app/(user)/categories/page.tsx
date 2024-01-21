@@ -1,6 +1,7 @@
 "use client";
 import React, { Suspense } from "react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 type Props = {};
 
@@ -15,8 +16,10 @@ type StoreCardPropsGrouped = {
 
 export default function Categories({}: Props) {
   const [categories, setCategories] = React.useState<StoreCardPropsGrouped>({});
+  const [loading, setLoading] = React.useState<boolean>(true);
   const getCategories = async () => {
-    const data = await fetch("/api/category", {
+    setLoading(true);
+    const data = await fetch("/api/categories", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -40,29 +43,36 @@ export default function Categories({}: Props) {
       }
     });
     setCategories(subCategoriesByName);
+    setLoading(false);
   };
   React.useEffect(() => {
     getCategories();
   }, []);
   return (
-    <main className="p-8">
-      <div className="text-center font-bold p-6 text-[32px]">
-        All Categories
-      </div>
-      {Object.keys(categories).map((categoryName, index) => (
-        <div key={index}>
-          <div className="font-bold text-[22px] mb-3">{categoryName}</div>
-          <ul>
-            {categories[categoryName].map((subcategory, subIndex) => (
-              <li key={subIndex} className="list-disc ml-3 mt-1">
-                <Link href={`category/${subcategory.subCategory}`}>
-                  {subcategory.subCategory}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+    <main className="p-4 min-h-screen min-w-screen">
+      {
+        loading? 
+        (<div className="flex justify-center items-center w-full h-full"><Loader2 size={58} className="animate-spin "/></div>) :
+        (<>
+          <div className="text-center font-bold p-6 text-[32px]">
+            All Categories
+          </div>
+          {Object.keys(categories).map((categoryName, index) => (
+            <div key={index}>
+              <div className="font-bold text-[22px] mb-3">{categoryName}</div>
+              <ul>
+                {categories[categoryName].map((subcategory, subIndex) => (
+                  <li key={subIndex} className="list-disc ml-3 mt-1">
+                    <Link href={`category/${subcategory.categoryId}`}>
+                      {subcategory.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          </>)
+      }
     </main>
   );
 }
